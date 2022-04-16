@@ -56,41 +56,41 @@ So, what I did was not only send the raw pulses via MQTT (as explained in steps 
 
 7. add “rules” for ESP Easy (“Tools” - “Advanced”: check the “rules” box and submit)
 8. take Rule 1 (they’re numbered without the possibility to insert names
-9. insert the following code for an gas meter with 100 impulses / m3 (1 imp for 0.01 m3)
+9. insert the following code for an energy meter with 2000 impulses / kWh
 
 ```
-On System#Boot do           //When the ESP boots, do
-  event,"Rules#Timer=1"     // Force initial update
-  loopTimerSet,1,30         //Set Timer 1 endless repeating for the next event every 30 seconds
+On System#Boot do    //When the ESP boots, do
+  event,"Rules#Timer=1" // Force initial update
+  loopTimerSet,1,30      //Set Timer 1 endless repeating for the next event every 30 seconds
 endon
 
-On Rules#Timer=1 do        //When Timer1 expires, do
-  let,1,[Gas#Count]*3600*1000/30*0.9122*11.271     // calculate the Watts (depending on the local utility provider for gas
-  let,2,[Gas#Total]/100                            // caclulates total m3 consumption
-  let,3,[Gas#Total]/100*0.9122*11.271              // calculates the total kWh (depending on the local utility provider for gas
-  Publish openHAB/%sysname%/Gas/W,[VAR#1]          // sends the Watts to MQTT
-  Publish openHAB/%sysname%/Gas/m3,[VAR#2]         // sends the total m3 to MQTT
-  Publish openHAB/%sysname%/Gas/kWh,[VAR#3]        //  sends the total kWh to MQTT
-  Publish openHAB/%sysname%/Gas/Count,[Gas#Count]  // sends raw count
-  Publish openHAB/%sysname%/Gas/Total,[Gas#Total]  // sends raw total
+On Rules#Timer=1 do  //When Timer1 expires, do
+  let,1,[Whirlpool#Count]*3600/2/30
+  let,2,[Whirlpool#Total]/2000
+  Publish openHAB/%sysname%/Whirlpool/W,[VAR#1]
+  Publish openHAB/%sysname%/Whirlpool/kWh,[VAR#2]
+  Publish openHAB/%sysname%/Whirlpool/Count,[Whirlpool#Count]
+  Publish openHAB/%sysname%/Whirlpool/Total,[Whirlpool#Total]
 endon
 ```
 
-10. insert the following code for an energy meter with 2000 impulses / kWh
+10. insert the following code in Rule2 for an gas meter with 100 impulses / m3 (1 imp for 0.01 m3)
 
 ```
-On System#Boot do         //When the ESP boots, do
-  event,"Rules#Timer=2"   // Force initial update
-  loopTimerSet,2,30       //Set Timer 2 endless repeating for the next event every 30 seconds
+On System#Boot do    //When the ESP boots, do
+  event,"Rules#Timer=2" // Force initial update
+  loopTimerSet,2,30      //Set Timer 1 endless repeating for the next event every 30 seconds
 endon
 
-On Rules#Timer=2 do  //When Timer2 expires, do
-  let,1,[Whirlpool#Count]*3600/2/30                            // calculate the Watts 
-  let,2,[Whirlpool#Total]/2000                                 // calculate the total kWh
-  Publish openHAB/%sysname%/Whirlpool/W,[VAR#1]                // sends the Watts to MQTT
-  Publish openHAB/%sysname%/Whirlpool/kWh,[VAR#2]              // sends the kWh to MQTT
-  Publish openHAB/%sysname%/Whirlpool/Count,[Whirlpool#Count]  // sends the raw count to MQTT
-  Publish openHAB/%sysname%/Whirlpool/Total,[Whirlpool#Total]  // sends the raw total to MQTT
+On Rules#Timer=2 do  //When Timer1 expires, do
+  let,1,[Gas#Count]*3600*1000/30*0.9122*11.271
+  let,2,[Gas#Total]/100
+  let,3,[Gas#Total]/100*0.9122*11.271
+  Publish openHAB/%sysname%/Gas/W,[VAR#1]
+  Publish openHAB/%sysname%/Gas/m3,[VAR#2]
+  Publish openHAB/%sysname%/Gas/kWh,[VAR#3]
+  Publish openHAB/%sysname%/Gas/Count,[Gas#Count]
+  Publish openHAB/%sysname%/Gas/Total,[Gas#Total]
 endon
 ```
 11. deactivate the “Send to Controller” in the device
