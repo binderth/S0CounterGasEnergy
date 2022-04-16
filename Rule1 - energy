@@ -1,0 +1,13 @@
+On System#Boot do    //When the ESP boots, do
+  event,"Rules#Timer=1" // Force initial update
+  loopTimerSet,1,30      //Set Timer 1 endless repeating for the next event every 30 seconds
+endon
+
+On Rules#Timer=1 do  //When Timer1 expires, do
+  let,1,[Whirlpool#Count]*3600/2/30
+  let,2,[Whirlpool#Total]/2000
+  Publish openHAB/%sysname%/Whirlpool/W,[VAR#1]
+  Publish openHAB/%sysname%/Whirlpool/kWh,[VAR#2]
+  Publish openHAB/%sysname%/Whirlpool/Count,[Whirlpool#Count]
+  Publish openHAB/%sysname%/Whirlpool/Total,[Whirlpool#Total]
+endon
