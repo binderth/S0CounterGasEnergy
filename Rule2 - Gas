@@ -1,0 +1,15 @@
+On System#Boot do    //When the ESP boots, do
+  event,"Rules#Timer=2" // Force initial update
+  loopTimerSet,2,30      //Set Timer 1 endless repeating for the next event every 30 seconds
+endon
+
+On Rules#Timer=2 do  //When Timer1 expires, do
+  let,1,[Gas#Count]*3600*1000/30*0.9122*11.271
+  let,2,[Gas#Total]/100
+  let,3,[Gas#Total]/100*0.9122*11.271
+  Publish openHAB/%sysname%/Gas/W,[VAR#1]
+  Publish openHAB/%sysname%/Gas/m3,[VAR#2]
+  Publish openHAB/%sysname%/Gas/kWh,[VAR#3]
+  Publish openHAB/%sysname%/Gas/Count,[Gas#Count]
+  Publish openHAB/%sysname%/Gas/Total,[Gas#Total]
+endon
